@@ -2780,6 +2780,8 @@
                                     </button>
 
                                 </div>
+                                <!-- Error / Result area (inside the search card) -->
+                                <div id="quickSearchResult" style="margin-top: 14px;"></div>
 
                             </div>
 
@@ -3610,119 +3612,223 @@
                 }
             }
         );
-
         async function searchModel() {
 
-            console.log(
-                "Search button clicked"
-            );
+    console.log("Search button clicked");
 
+    const model = document.getElementById("model").value.trim();
+    const country = document.getElementById("country").value.trim();
+    const resultDiv = document.getElementById("quickSearchResult");   // ← changed
 
-            const model =
-                document.getElementById(
-                    "model"
-                ).value.trim();
+    // Clear previous message
+    if (resultDiv) resultDiv.innerHTML = "";
 
-
-            const country =
-                document.getElementById(
-                    "country"
-                ).value.trim();
-
-
-            if (!model || !country) {
-
-                const result =
-                    document.getElementById(
-                        "result"
-                    );
-
-
-                if (result) {
-
-                    result.innerHTML = `
-                <div class="no-data">
-                    Please enter a Model Number
-                    and select a Country.
+    if (!model || !country) {
+        if (resultDiv) {
+            resultDiv.innerHTML = `
+                <div style="
+                    padding: 12px 16px;
+                    background: rgba(127, 29, 29, 0.25);
+                    border: 1px solid #7f1d1d;
+                    border-radius: 10px;
+                    color: #fca5a5;
+                    font-size: 13.5px;
+                    font-weight: 500;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                ">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Please enter a Model Number and select a Country.
                 </div>
             `;
-                }
-
-                return;
-            }
-
-            console.log(
-                "Model:",
-                model
-            );
-
-            console.log(
-                "Country:",
-                country
-            );
-
-            try {
-
-                const response =
-                    await fetch(
-                        `/api/model/get?model=${encodeURIComponent(model)}&country=${encodeURIComponent(country)}`
-                    );
-                console.log("API called");
-                const data = await response.json();
-                console.log("Response:", data);
-                const record = data.d;
-                console.log(record);
-
-
-                if (!response.ok) {
-                    const errorMessage =
-                        data?.error?.error?.message?.value ||
-                        data?.error?.message?.value ||
-                        "Search failed";
-
-                    throw new Error(errorMessage);
-                }
-
-
-
-
-                if (!record) {
-
-                    document.getElementById(
-                        "result"
-                    ).innerHTML = `
-                <div class="no-data">
-                    No model data found.
-                </div>
-            `;
-
-                    return;
-                }
-
-                document.getElementById(
-                    "result"
-                ).innerHTML = "";
-
-                modelDetailsSource = "dashboard";
-
-                loadModelDetails(
-                    record
-                );
-
-
-            }
-            catch (error) {
-                const resultDiv = document.getElementById("result");
-
-                if (resultDiv) {
-                    resultDiv.innerHTML = `
-            <div class="no-data">
-                ${error.message}
-            </div>
-        `;
-                }
-            }
         }
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `/api/model/get?model=${encodeURIComponent(model)}&country=${encodeURIComponent(country)}`
+        );
+
+        console.log("API called");
+        const data = await response.json();
+        console.log("Response:", data);
+
+        const record = data.d;
+
+        if (!response.ok) {
+            const errorMessage =
+                data?.error?.error?.message?.value ||
+                data?.error?.message?.value ||
+                "Search failed";
+            throw new Error(errorMessage);
+        }
+
+        if (!record) {
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div style="
+                        padding: 12px 16px;
+                        background: rgba(127, 29, 29, 0.25);
+                        border: 1px solid #7f1d1d;
+                        border-radius: 10px;
+                        color: #fca5a5;
+                        font-size: 13.5px;
+                        font-weight: 500;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    ">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Model does not exist
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        // Clear error if model found
+        if (resultDiv) resultDiv.innerHTML = "";
+
+        modelDetailsSource = "dashboard";
+        loadModelDetails(record);
+
+    } catch (error) {
+        if (resultDiv) {
+            resultDiv.innerHTML = `
+                <div style="
+                    padding: 12px 16px;
+                    background: rgba(127, 29, 29, 0.25);
+                    border: 1px solid #7f1d1d;
+                    border-radius: 10px;
+                    color: #fca5a5;
+                    font-size: 13.5px;
+                    font-weight: 500;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                ">
+                    <i class="fas fa-exclamation-circle"></i>
+                    ${error.message}
+                </div>
+            `;
+        }
+    }
+}
+
+        // async function searchModel() {
+
+        //     console.log(
+        //         "Search button clicked"
+        //     );
+
+
+        //     const model =
+        //         document.getElementById(
+        //             "model"
+        //         ).value.trim();
+
+
+        //     const country =
+        //         document.getElementById(
+        //             "country"
+        //         ).value.trim();
+
+
+        //     if (!model || !country) {
+
+        //         const result =
+        //             document.getElementById(
+        //                 "result"
+        //             );
+
+
+        //         if (result) {
+
+        //             result.innerHTML = `
+        //         <div class="no-data">
+        //             Please enter a Model Number
+        //             and select a Country.
+        //         </div>
+        //     `;
+        //         }
+
+        //         return;
+        //     }
+
+        //     console.log(
+        //         "Model:",
+        //         model
+        //     );
+
+        //     console.log(
+        //         "Country:",
+        //         country
+        //     );
+
+        //     try {
+
+        //         const response =
+        //             await fetch(
+        //                 `/api/model/get?model=${encodeURIComponent(model)}&country=${encodeURIComponent(country)}`
+        //             );
+        //         console.log("API called");
+        //         const data = await response.json();
+        //         console.log("Response:", data);
+        //         const record = data.d;
+        //         console.log(record);
+
+
+        //         if (!response.ok) {
+        //             const errorMessage =
+        //                 data?.error?.error?.message?.value ||
+        //                 data?.error?.message?.value ||
+        //                 "Search failed";
+
+        //             throw new Error(errorMessage);
+        //         }
+
+
+
+
+        //         if (!record) {
+
+        //             document.getElementById(
+        //                 "result"
+        //             ).innerHTML = `
+        //         <div class="no-data">
+        //             No model data found.
+        //         </div>
+        //     `;
+
+        //             return;
+        //         }
+
+        //         document.getElementById(
+        //             "result"
+        //         ).innerHTML = "";
+
+        //         modelDetailsSource = "dashboard";
+
+        //         loadModelDetails(
+        //             record
+        //         );
+
+
+        //     }
+        //     catch (error) {
+        //         const resultDiv = document.getElementById("result");
+
+        //         if (resultDiv) {
+        //             resultDiv.innerHTML = `
+        //     <div class="no-data">
+        //         ${error.message}
+        //     </div>
+        // `;
+        //         }
+        //     }
+        // }
 
         function loadModelDetails(
             r,
@@ -3953,25 +4059,25 @@
             );
 
         // Model Report Functions
-       async function loadModelReport() {
-    try {
+        async function loadModelReport() {
+            try {
 
-        const model = document.getElementById(
-            "reportModelSearch"
-        ).value.trim();
+                const model = document.getElementById(
+                    "reportModelSearch"
+                ).value.trim();
 
-        const country = document.getElementById(
-            "reportCountrySearch"
-        ).value.trim();
+                const country = document.getElementById(
+                    "reportCountrySearch"
+                ).value.trim();
 
-        if (!model || !country) {
-            return;
-        }
+                if (!model || !country) {
+                    return;
+                }
 
-        const response = await fetch(
-            `/api/models?model=${encodeURIComponent(model)}&country=${encodeURIComponent(country)}`
-        );
-        console.log("API called");
+                const response = await fetch(
+                    `/api/models?model=${encodeURIComponent(model)}&country=${encodeURIComponent(country)}`
+                );
+                console.log("API called");
                 const data = await response.json();
                 console.log(JSON.stringify(data, null, 2));
                 const record = data.d;
@@ -3982,56 +4088,56 @@
                 console.log(record);
 
 
-        // Handle backend errors dynamically
-        if (!response.ok || data?.error) {
-            throw new Error(
-                data?.error?.error?.message?.value ||
-                data?.error?.message?.value ||
-                "Model does not exist"
-            );
-        }
+                // Handle backend errors dynamically
+                if (!response.ok || data?.error) {
+                    throw new Error(
+                        data?.error?.error?.message?.value ||
+                        data?.error?.message?.value ||
+                        "Model does not exist"
+                    );
+                }
 
-        const results = data?.d?.results || [];
+                const results = data?.d?.results || [];
 
-        document.getElementById(
-            "modelCount"
-        ).innerHTML =
-            `📋 Search Results : ${results.length} Models`;
+                document.getElementById(
+                    "modelCount"
+                ).innerHTML =
+                    `📋 Search Results : ${results.length} Models`;
 
-        buildCards(results);
-        buildReportTable(results);
+                buildCards(results);
+                buildReportTable(results);
 
-        document.getElementById(
-            "reportTableSection"
-        ).style.display = "block";
+                document.getElementById(
+                    "reportTableSection"
+                ).style.display = "block";
 
-        document.getElementById(
-            "modelCardsContainer"
-        ).style.display = "none";
+                document.getElementById(
+                    "modelCardsContainer"
+                ).style.display = "none";
 
-        document.getElementById(
-            "cardsToggleBtn"
-        ).innerHTML =
-            "View Model Cards ▼";
+                document.getElementById(
+                    "cardsToggleBtn"
+                ).innerHTML =
+                    "View Model Cards ▼";
 
-    } catch (error) {
+            } catch (error) {
 
-           document.getElementById("modelCount").innerHTML = `
+                document.getElementById("modelCount").innerHTML = `
         <div class="no-data">
             ${error.message}
         </div>
     `;
 
-        // Or display in a div instead of alert
-        /*
-        document.getElementById("modelCount").innerHTML = `
-            <span style="color:red">
-                ${error.message}
-            </span>
-        `;
-        */
-    }
-}
+                // Or display in a div instead of alert
+                /*
+                document.getElementById("modelCount").innerHTML = `
+                    <span style="color:red">
+                        ${error.message}
+                    </span>
+                `;
+                */
+            }
+        }
 
         function buildCards(results) {
             document.getElementById("modelCards").innerHTML = results.map(r => {
