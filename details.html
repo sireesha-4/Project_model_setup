@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <title>Model Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0b1220;
+            color: #e2e8f0;
+            padding: 22px 24px;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        /* HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.4px;
+        }
+
+        .page-subtitle {
+            font-size: 12.5px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            min-height: 32px;
+        }
+
+        .active-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            height: 32px;
+            min-height: 32px;
+
+            margin: 0;
+            padding: 0 12px;
+
+            border-radius: 20px;
+
+            background: #064e3b;
+            color: #6ee7b7;
+
+            font-size: 11.5px;
+            font-weight: 600;
+
+            border: 1px solid #065f46;
+
+            line-height: 1;
+
+            position: static;
+            top: auto;
+            transform: none;
+
+            gap: 6px;
+        }
+
+        .active-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .back-btn {
+            height: 32px;
+            min-height: 32px;
+
+            margin: 0;
+            padding: 0 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: #ffffff;
+
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+
+            white-space: nowrap;
+
+            cursor: pointer;
+
+            position: static;
+            top: auto;
+            transform: none;
+
+            vertical-align: middle;
+
+            transition:
+                background 0.18s ease;
+        }
+
+        .back-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* HERO */
+        /* =========================================================
+   DETAILS HERO – Premium Target Match
+========================================================= */
+        .details-hero {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            /* slightly wider left column */
+            gap: 28px;
+            background: linear-gradient(145deg, #162238 0%, #1a2a42 100%);
+            border: 1px solid #243b55;
+            border-radius: 20px;
+            padding: 24px 28px;
+            /* reduced padding so image can grow */
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .details-hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-image-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            /* remove inner background */
+            border: none;
+            /* remove inner border */
+            border-radius: 0;
+            padding: 0;
+            /* no padding – image can touch edges */
+            height: 100%;
+        }
+
+        .hero-printer {
+            width: 100%;
+            max-width: 310px;
+            /* almost fills the 340px column */
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.45));
+        }
+
+        .hero-info-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-model-name {
+            font-size: 42px;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -1.2px;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .hero-model-subtitle {
+            font-size: 16px;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+
+        .hero-description {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+            max-width: 520px;
+            margin-bottom: 22px;
+        }
+
+        .feature-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .feature-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 28, 46, 0.7);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .feature-badge i {
+            color: #60a5fa;
+            font-size: 14px;
+        }
+
+        /* KPI Grid inside Hero */
+        .details-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .details-kpi {
+            background: rgba(15, 28, 46, 0.7);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 14px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .details-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Colored left accent */
+        .details-kpi::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+        }
+
+        .details-kpi.programs::before {
+            background: #2563eb;
+        }
+
+        .details-kpi.warranty::before {
+            background: #14b8a6;
+        }
+
+        .details-kpi.setup::before {
+            background: #8b5cf6;
+        }
+
+        .details-kpi.orders::before {
+            background: #f59e0b;
+        }
+
+        /* Icons */
+        .details-kpi-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .details-kpi.programs .details-kpi-icon {
+            background: rgba(37, 99, 235, 0.18);
+            color: #60a5fa;
+        }
+
+        .details-kpi.warranty .details-kpi-icon {
+            background: rgba(20, 184, 166, 0.18);
+            color: #2dd4bf;
+        }
+
+        .details-kpi.setup .details-kpi-icon {
+            background: rgba(139, 92, 246, 0.18);
+            color: #a78bfa;
+        }
+
+        .details-kpi.orders .details-kpi-icon {
+            background: rgba(245, 158, 11, 0.18);
+            color: #fbbf24;
+        }
+
+        .details-kpi-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .details-kpi-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        .details-kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            line-height: 1.1;
+        }
+
+        .details-kpi-desc {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 1px;
+        }
+
+        /* Image */
+        @media (max-width: 1100px) {
+            .details-hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 24px;
+            }
+
+            .hero-image-area {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: transparent;
+                /* remove inner background */
+                border: none;
+                /* remove inner border */
+                border-radius: 0;
+                padding: 0;
+                /* no padding */
+                margin-bottom: 16px;
+            }
+
+            .hero-info-area {
+                align-items: center;
+            }
+
+            .hero-description {
+                max-width: 100%;
+            }
+
+            .feature-badges {
+                justify-content: center;
+            }
+
+            .details-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-printer {
+                max-width: 382px;
+                /* still large */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .details-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-model-name {
+                font-size: 32px;
+            }
+
+            .hero-printer {
+                width: 100%;
+                max-width: 240px;
+                height: auto;
+                object-fit: contain;
+                filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+            }
+        }
+
+        .details-kpi.programs .details-kpi-icon {
+            background: rgba(37, 99, 235, 0.18);
+            color: #60a5fa;
+        }
+
+        .details-kpi.warranty .details-kpi-icon {
+            background: rgba(20, 184, 166, 0.18);
+            color: #2dd4bf;
+        }
+
+        .details-kpi.setup .details-kpi-icon {
+            background: rgba(139, 92, 246, 0.18);
+            color: #a78bfa;
+        }
+
+        .details-kpi.orders .details-kpi-icon {
+            background: rgba(245, 158, 11, 0.18);
+            color: #fbbf24;
+        }
+
+        /* TABS */
+        .tabs-wrapper {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .tabs {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 2px;
+        }
+
+        .tab {
+            height: 48px;
+            padding: 0 14px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #60a5fa;
+        }
+
+        .tab.active {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .tab.active::after {
+            content: "";
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            bottom: 0;
+            height: 2.5px;
+            border-radius: 2px 2px 0 0;
+            background: #3b82f6;
+        }
+
+        /* CONTENT */
+        .content-container {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px;
+            min-height: 280px;
+        }
+
+        .content-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 3px;
+        }
+
+        .content-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 16px;
+        }
+
+        /* OVERVIEW */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr 1.1fr;
+            gap: 12px;
+        }
+
+        .info-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .info-header {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            border-bottom: 1px solid #1e293b;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .general-header {
+            background: #1e293b;
+            color: #60a5fa;
+        }
+
+        .status-header {
+            background: #1e293b;
+            color: #34d399;
+        }
+
+        .highlight-header {
+            background: #1e293b;
+            color: #a78bfa;
+        }
+
+        .info-body {
+            padding: 4px 14px 6px;
+        }
+
+        .info-row {
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* min-height: 38px; */
+            gap: 12px;
+            /* border-bottom: 1px solid #1e293b; */
+            padding: 12px 16px;
+            text-align: left;
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .info-value {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #e2e8f0;
+            text-align: right;
+        }
+
+        /* STATUS PILLS */
+        .status-yes {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: #064e3b;
+            color: #6ee7b7;
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+
+        .status-no {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: #450a0a;
+            color: #fca5a5;
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+
+        .status-neutral {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: #1e293b;
+            color: #94a3b8;
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+
+        /* HIGHLIGHTS */
+        .highlight-row {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .highlight-row:last-child {
+            border-bottom: none;
+        }
+
+        .highlight-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .check {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #064e3b;
+            color: #6ee7b7;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* DATA SECTIONS */
+        .data-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .data-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            overflow: hidden;
+            height: fit-content;
+        }
+
+        .data-card-header {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 14px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            color: #e2e8f0;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .data-card-body {
+            padding: 4px 14px;
+        }
+
+        .data-row {
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .data-value {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #e2e8f0;
+            text-align: right;
+        }
+
+        /* LOADING / ERROR */
+        .loading {
+            padding: 60px 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13.5px;
+        }
+
+        .error-card {
+            padding: 16px;
+            border-radius: 10px;
+            background: #450a0a;
+            border: 1px solid #7f1d1d;
+            color: #fca5a5;
+            font-size: 13px;
+        }
+
+        .error-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .hero-section {
+                grid-template-columns: minmax(300px, 2.5fr) repeat(4, minmax(110px, 1fr));
+            }
+
+            .model-name {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .hero-section {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .summary-card {
+                grid-column: span 2;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 14px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero-section {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                grid-column: auto;
+            }
+
+            .model-details {
+                grid-template-columns: 1fr;
+            }
+
+            .model-detail:not(:last-child) {
+                border-right: none;
+                border-bottom: 1px solid #334155;
+                padding-bottom: 8px;
+            }
+        }
+
+
+        .sample-model {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* min-height: 38px; */
+            gap: 12px;
+            /* border-bottom: 1px solid #1e293b; */
+            padding: 12px 16px;
+            font-size: 12px;
+            text-align: left;
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sample-model-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-grid-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .order-grid-row .data-label {
+            width: 180px;
+        }
+
+        .order-grid-row .status-yes,
+        .order-grid-row .status-no {
+            margin-right: 12px;
+        }
+        .order-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================= -->
+
+    <div class="page-header">
+
+        <div class="page-title-area">
+
+            <h1 class="page-title">
+                Model Details
+            </h1>
+
+            <p class="page-subtitle">
+                View overall information and status for the selected model
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <span class="active-badge">
+
+                <span class="active-dot"></span>
+
+                <span id="headerStatus">
+                    Active
+                </span>
+
+            </span>
+
+            <button id="backToReportBtn" class="back-btn" onclick="goBackToModelReport()" style="display:none;">
+
+                ← Back To Model Report
+
+            </button>
+
+            <button class="back-btn" onclick="goBackToDashboard()">
+
+                ← Back To Dashboard
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         DYNAMIC CONTENT
+    ========================================================= -->
+
+    <div id="details">
+
+        <div class="loading">
+            Loading model details...
+        </div>
+
+    </div>
+
+    <script>
+
+        /* =========================================================
+           BACK TO DASHBOARD
+        ========================================================= */
+
+        function goBackToDashboard() {
+
+            const topHeader =
+                parent.document.getElementById("topHeader");
+
+            const dashboardContent =
+                parent.document.getElementById("dashboardContent");
+
+            const detailsContent =
+                parent.document.getElementById("detailsContent");
+
+
+            if (topHeader) {
+
+                topHeader.style.display = "flex";
+
+            }
+
+            if (dashboardContent) {
+
+                dashboardContent.style.display = "block";
+
+            }
+
+            if (detailsContent) {
+
+                detailsContent.innerHTML = "";
+
+            }
+
+        }
+
+        // goBackToModelReport // 
+
+        function goBackToModelReport() {
+
+            if (
+                window.parent &&
+                typeof window.parent.returnToModelReport === "function"
+            ) {
+
+                window.parent.returnToModelReport();
+
+                return;
+            }
+
+
+            console.error(
+                "returnToModelReport function not found in parent"
+            );
+        }
+
+        function configureBackButtons() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const source =
+                params.get("source");
+
+
+            const reportButton =
+                document.getElementById(
+                    "backToReportBtn"
+                );
+
+
+            if (!reportButton) {
+                return;
+            }
+
+
+            if (source === "modelReport") {
+
+                reportButton.style.display =
+                    "inline-flex";
+
+            } else {
+
+                reportButton.style.display =
+                    "none";
+            }
+        }
+
+        /* =========================================================
+           SAP X / EMPTY VALUE
+        ========================================================= */
+
+        function iconValue(value) {
+
+            if (value === "X") {
+
+                return `
+                    <span class="status-yes">
+                        YES
+                    </span>
+                `;
+
+            }
+
+            return `
+                <span class="status-no">
+                    NO
+                </span>
+            `;
+
+        }
+
+        /* =========================================================
+           SAFE VALUE
+        ========================================================= */
+
+        function safeValue(value) {
+
+            if (
+                value === undefined ||
+                value === null ||
+                value === ""
+            ) {
+
+                return "-";
+
+            }
+
+            return value;
+
+        }
+
+        /* =========================================================
+           COUNT X VALUES
+        ========================================================= */
+
+        function countEnabled(values) {
+
+            return values.filter(
+                value => value === "X"
+            ).length;
+
+        }
+
+        /* =========================================================
+           LOAD SAP MODEL DETAILS
+        ========================================================= */
+
+        async function loadDetails() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            const matnr =
+                params.get("matnr");
+
+
+            const country =
+                params.get("country");
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/model/get?model=${encodeURIComponent(matnr)}&country=${encodeURIComponent(country)}`
+                    );
+
+                    console.log("API called");
+                const data = await response.json();
+                console.log("Response:", data);
+                const record = data.d;
+                console.log("FIRST RECORD");
+                console.log(record);
+
+                 if (!record) {
+
+                    document.getElementById("modelChangeResult")
+                        .innerHTML =
+                        "<div>No data found</div>";
+                    return;
+                }
+
+                const r =
+                    data &&
+                        data.d
+                        ? data.d
+                        : null;
+
+                if (!r) {
+
+                    throw new Error(
+                        "No model details were returned from SAP."
+                    );
+                }
+
+                //  for sample model Flag
+                const samplematerial = (r.B1smatnr || r.Demomatnr || r.Samplematnr) ? 'X' : '';
+
+                /* =====================================================
+                   DYNAMIC COUNTS
+                ===================================================== */
+
+                const programCount =
+                    countEnabled([
+                        r.Amazondart,
+                        r.Brrefresh,
+                        r.Barracuda,
+                        r.Bplus
+                    ]);
+
+
+                const warrantyCount =
+                    [
+                        r.StdWtyType === "S",
+                        r.ExtdWtyType === "X",
+                        r.BplusWtyType === "L",
+                        r.BcareWtyType === "B"
+                    ].filter(Boolean).length;
+
+
+                const orderCount =
+                    [
+                        r.Drum === "X",
+                        r.WasteToner === "X",
+                        r.BeltUnit === "X",
+                        r.Claimorder === "X"
+                    ].filter(Boolean).length;
+
+
+                /*
+                 * Setup is calculated from the SAP setup/order
+                 * configuration values instead of hard-coding "2".
+                 */
+
+                const setupCount =
+                    [
+                        r.Selkzb1 === "X",
+                        r.Selkzbr === "X"
+                    ].filter(Boolean).length;
+
+
+
+                /* =====================================================
+                   STATUS
+                ===================================================== */
+
+                const overallStatus =
+                    safeValue(
+                        r.Status ||
+                        r.OverallStatus ||
+                        r.ModelStatus
+                    );
+
+
+                /*
+                 * If SAP does not provide one of these fields,
+                 * we do NOT invent data.
+                 */
+
+                const displayStatus =
+                    overallStatus === "-"
+                        ? "Available"
+                        : overallStatus;
+
+
+                document.getElementById(
+                    "headerStatus"
+                ).textContent =
+                    displayStatus;
+
+                /* =====================================================
+                   RENDER PAGE
+                ===================================================== */
+
+                document.getElementById(
+                    "details"
+                ).innerHTML = `
+
+                    <!-- =============================================
+                         HERO
+                    ============================================== -->
+<!-- HERO + KPI -->
+<!-- HERO + KPI (combined) -->
+<div class="details-hero">
+    <!-- Left: Large Printer -->
+    <div class="hero-image-area">
+        <img src="imageprinter.png" alt="Printer" class="hero-printer">
+    </div>
+
+    <!-- Right: Model Info + KPIs -->
+    <div class="hero-info-area">
+        <div class="hero-label">MODEL DETAILS</div>
+        <div class="hero-model-name">${safeValue(r.Matnr)}</div>
+        <div class="hero-model-subtitle">Wireless Monochrome Laser Multi-Function Printer</div>
+        <div class="hero-description">
+            Compact, efficient and reliable monochrome laser printing with wireless connectivity, duplex printing and scan/copy/fax capabilities.
+        </div>
+
+        <!-- KPI CARDS now inside the hero (yellow area) -->
+        <div class="details-kpi-grid">
+            <div class="details-kpi programs">
+                <div class="details-kpi-icon"><i class="fas fa-box"></i></div>
+                <div class="details-kpi-content">
+                    <div class="details-kpi-label">Compatible Programs</div>
+                    <div class="details-kpi-value">${programCount}</div>
+                    <div class="details-kpi-desc">Available</div>
+                </div>
+            </div>
+
+            <div class="details-kpi warranty">
+                <div class="details-kpi-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="details-kpi-content">
+                    <div class="details-kpi-label">Warranty</div>
+                    <div class="details-kpi-value">${warrantyCount}</div>
+                    <div class="details-kpi-desc">Available</div>
+                </div>
+            </div>
+
+            <div class="details-kpi setup">
+                <div class="details-kpi-icon"><i class="fas fa-cog"></i></div>
+                <div class="details-kpi-content">
+                    <div class="details-kpi-label">Price Setup</div>
+                    <div class="details-kpi-value">${setupCount}</div>
+                    <div class="details-kpi-desc">Configured</div>
+                </div>
+            </div>
+
+            <div class="details-kpi orders">
+                <div class="details-kpi-icon"><i class="fas fa-file-alt"></i></div>
+                <div class="details-kpi-content">
+                    <div class="details-kpi-label">Orders</div>
+                    <div class="details-kpi-value">${orderCount}</div>
+                    <div class="details-kpi-desc">Active</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- =============================================
+                         TABS
+                    ============================================== -->
+
+                    <div class="tabs-wrapper">
+
+                        <div class="tabs">
+
+                            <button
+                                class="tab active"
+                                data-tab="overview">
+
+                                ▣ Material Information
+
+
+                            </button>
+
+                            <button
+                                class="tab"
+                                data-tab="programs">
+                                ▦ Compatible Programs
+                            </button>
+
+                            <button
+                                class="tab"
+                                data-tab="warranty">
+                                ♢ Warranty Details
+                            </button>
+
+                            <button
+                                class="tab"
+                                data-tab="orders">
+                                 🛒 Order Drum & Accessories
+
+                            </button>
+
+                            <button
+                                class="tab"
+                                data-tab="pricing">
+                                ◇ Price Details
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB CONTENT
+                    ============================================== -->
+
+                    <div
+                        id="tabContent"
+                        class="content-container">
+
+                        <!-- OVERVIEW -->
+
+                        <div
+                            id="overviewTab"
+                            class="tab-panel">
+
+
+                            <div class="overview-grid">
+
+                                <!-- GENERAL -->
+
+                                <div class="info-card">
+
+                                    <div class="info-header general-header">
+                                        ℹ General Information
+                                    </div>
+
+                                    <div class="info-body">
+
+                                        <div class="info-row">
+
+                                            <span class="info-label">
+                                                Model
+                                            </span>
+
+                                            <span class="info-value">
+                                                ${safeValue(r.Matnr)}
+                                            </span>
+                                        </div>
+
+                                        <div class="info-row">
+
+                                            <span class="info-label">
+                                                Country
+                                            </span>
+
+                                            <span class="info-value">
+                                                ${safeValue(r.Country)}
+                                            </span>
+                                        </div>
+
+                                        <div class="info-row">
+                                            <span class="info-label">
+                                                EAN/UPC
+                                            </span>
+                                            
+
+                                            <span class="info-value">
+                                                ${safeValue(r.Ean11)}
+                                            </span>
+                                        </div>
+                                                         
+<div class="info-row">
+    <span class="info-label">
+        Sample Model
+    </span>
+    ${iconValue(samplematerial)}
+</div>
+
+                                    </div>
+                                </div>
+
+                        ${samplematerial === "X" ? `
+
+<div class="info-card">
+    <div class="info-header general-header">
+        🛒 Sample Model Details
+    </div>
+
+    <div class="info-body">
+
+        ${[
+            { matnr: r.B1smatnr, upc: r.B1supc || r.B1sUpc || r.B1sean11 },
+            { matnr: r.Demomatnr, upc: r.Demoupc || r.DemoUpc || r.Demoean11 },
+            { matnr: r.Samplematnr, upc: r.Sampleupc || r.SampleUpc || r.Sampleean11 }
+        ]
+        .filter(item => item.matnr && item.matnr.trim() !== "")
+        .map(item => `
+            <div class="sample-model">
+                <span>${item.matnr}</span>
+                ${item.upc && item.upc.trim() !== "" 
+                    ? `<span style="color:#e2e8f0; font-weight:500; margin-left:10px;">EAN/UPC : ${item.upc}</span>` 
+                    : ""}
+            </div>
+        `)
+        .join("")}
+
+    </div>
+</div>
+` : ''}
+
+                                <!-- HIGHLIGHTS -->
+                                <div class="info-card">
+
+                                    <div class="info-header highlight-header">
+                                        ★ Highlights
+                                    </div>
+
+                                    <div class="info-body">
+                                        <div class="highlight-row">
+                                            <span class="highlight-text">
+                                                <span class="check">
+                                                    ✓
+                                                </span>
+
+                                                Model information available
+
+                                            </span>
+
+                                            <span class="status-yes">
+                                                YES
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="highlight-row">
+
+                                            <span class="highlight-text">
+
+                                                <span class="check">
+                                                    ✓
+                                                </span>
+
+                                                Warranty configuration
+
+                                            </span>
+
+                                            ${warrantyCount > 0
+                        ? `<span class="status-yes">YES</span>`
+                        : `<span class="status-no">NO</span>`
+                    }
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- WARRANTY -->
+
+                        <div
+                            id="warrantyTab"
+                            class="tab-panel"
+                            style="display:none;">
+
+                                        <div class="data-section">
+
+
+                                <div class="data-card">
+
+                                    <div class="data-card-header">
+                                        🛡 Warranty Configuration
+                                    </div>
+
+
+                                    <div class="data-card-body">
+
+                                        <div class="data-row">
+
+                                          <span class="data-label">
+                                              Standard Warranty
+                                          </span>
+
+                                          ${r.StdWtyType === "S"
+                        ? `<span class="status-yes">
+                                                  ${r.StdWtyLen || 0}
+                                          ${r.StdWtyLenUnit || ""}
+                                                 </span>`
+                        : `<span class="status-no">NO</span>`
+                    }
+                                      
+                                      </div>
+
+
+    <div class="data-row">
+
+    <span class="data-label">
+        Extended Warranty
+    </span>
+
+    ${r.ExtdWtyType === "X"
+                        ? `<span class="status-yes">
+              ${r.ExtdWtyLen || 0}
+              ${r.ExtdWtyLenUnit || ""}
+           </span>`
+                        : `<span class="status-no">NO</span>`
+                    }
+
+</div>
+
+
+<div class="data-row">
+
+    <span class="data-label">
+        BrotherPlus Warranty
+    </span>
+
+    ${r.BplusWtyType === "L"
+                        ? `<span class="status-yes">
+              ${r.BplusWtyLen || 0}
+              ${r.BplusWtyLenUnit || ""}
+           </span>`
+                        : `<span class="status-no">NO</span>`
+                    }
+
+</div>
+
+<div class="data-row">
+
+    <span class="data-label">
+        BrotherCare Warranty
+    </span>
+
+    ${r.BcareWtyType === "B"
+                        ? `<span class="status-yes">
+              ${r.BcareWtyLen || 0}
+              ${r.BcareWtyLenUnit || ""}
+           </span>`
+                        : `<span class="status-no">NO</span>`
+                    }
+
+</div>
+
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                         <!-- PROGRAMS -->
+
+                        <div
+                            id="programsTab"
+                            class="tab-panel"
+                            style="display:none;">
+
+                                      <div class="data-section">
+
+                                <div class="data-card">
+
+                                    <div class="data-card-header">
+                                        📦 Program Configuration
+                                    </div>
+
+
+                                    <div class="data-card-body">
+
+                                        <div class="data-row">
+
+                                            <span class="data-label">
+                                                Amazon Dart
+                                            </span>
+
+                                            ${iconValue(r.Amazondart)}
+
+                                        </div>
+
+
+                                        <div class="data-row">
+
+                                            <span class="data-label">
+                                                BR Refresh
+                                            </span>
+
+                                            ${iconValue(r.Brrefresh)}
+
+                                        </div>
+
+
+                                        <div class="data-row">
+
+                                            <span class="data-label">
+                                                Barracuda
+                                            </span>
+
+                                            ${iconValue(r.Barracuda)}
+
+                                        </div>
+
+
+                                        <div class="data-row">
+
+                                            <span class="data-label">
+                                                Brother Plus
+                                            </span>
+
+                                            ${iconValue(r.Bplus)}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                ${r.Barracuda === "X" ? `
+                                                        <div class="data-card">
+                                                            <div class="data-card-header">
+                                                                🎯 Barracuda Plans/Warranty Details
+                                                            </div>
+
+                                <div class="data-card-body">
+
+                                    <div class="info-row">
+                                        <span class="info-label">Basic</span>
+                                        <span class="info-value">${iconValue(r.B1basic)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Occasional</span>
+                                        <span class="info-value">${iconValue(r.B1occasional)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Moderate</span>
+                                        <span class="info-value">${iconValue(r.B1moderate)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Frequent</span>
+                                        <span class="info-value">${iconValue(r.B1frequent)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">High</span>
+                                        <span class="info-value">${iconValue(r.B1high)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Power</span>
+                                        <span class="info-value">${iconValue(r.B1power)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Product Type</span>
+                                        <span class="info-value">${safeValue(r.B1producttype)}</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Product Warranty</span>
+                                        <span class="info-value">
+                                            ${r.B1standardwarr ? r.B1standardwarr + " Months" : "-"}
+                                       </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            ` : ""}
+
+                            </div>
+
+                        </div>                       
+
+
+                        <!-- PRICING -->
+
+                        <div
+                            id="pricingTab"
+                            class="tab-panel"
+                            style="display:none;">
+
+            
+                            <div class="data-section">
+
+
+                                <div class="data-card">
+
+                                    <div class="data-card-header">
+                                        ◇ Pricing Configuration
+                                    </div>
+
+                                    <div class="data-card-body">
+
+                                  <div class="data-row">
+                                      <span class="data-label">
+                                          Model Price
+                                      </span>
+
+                                      <span class="data-value">
+                                          ${r.Selkzb1 === "X" && Number(r.B1kbetr) > 0
+                        ? `
+                                                  
+                                                  <span style="margin-left:8px;">
+                                                      ( ${r.B1kbetr || ""} ${r.B1konwa || ""} )
+                                                  </span>
+                                                  <span class="status-yes">YES</span>
+                                                `
+                        : `<span class="status-no">NO</span>`
+                    }
+                                      </span>
+                                  </div>
+
+                                  <div class="data-row">
+                                      <span class="data-label">
+                                          Consumable Price
+                                      </span>
+
+                                     <span class="data-value">
+                                      ${r.Selkzbr === "X" && Number(r.Brkbetr) > 0
+                        ? `
+            
+                                              <span style="margin-left:8px;color:#e2e8f0;">
+                                                  ( ${r.Brkbetr} ${r.Brkonwa} )
+                                              </span>
+                                              <span class="status-yes">YES</span>
+                                            `
+                        : `<span class="status-no">NO</span>`
+                    }
+                                  </span>
+                                  </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        
+                        <!-- ORDER SETUP -->
+
+                        <div
+                            id="ordersTab"
+                            class="tab-panel"
+                            style="display:none;">
+
+      
+                            <div class="data-section">
+
+
+                                <div class="data-card">
+
+                                    <div class="data-card-header">
+                                        🛒 Order Configuration
+                                    </div>
+
+
+                                    <div class="data-card-body">
+
+						<div class="data-row">
+                                      <span class="data-label">
+                                           Drum Order
+                                      </span>
+                                      <span class="data-value">
+                                          ${r.Drum === "X" ? `
+                                                  <span style="margin-left:8px;">
+                                                      ( ${r.Drconsumable} )
+                                                  </span>
+                                                  <span class="status-yes">YES</span>
+                                                `
+                                 : `<span class="status-no">NO</span>`
+                    }
+                                      </span>
+                                  </div>
+
+						<div class="data-row">
+                                      <span class="data-label">
+                                          Waste Toner
+                                      </span>
+                                      <span class="data-value">
+                                          ${r.WasteToner === "X" ? `
+                                                  
+                                                  <span style="margin-left:8px;">
+                                                      ( ${r.Wtconsumable} )
+                                                  </span>
+                                                  <span class="status-yes">YES</span>
+                                                `
+                                 : `<span class="status-no">NO</span>`
+                    }
+                                      </span>
+                                  </div>
+
+						<div class="data-row">
+                                      <span class="data-label">
+                                         Belt Unit
+                                      </span>
+                                      <span class="data-value">
+                                          ${r.BeltUnit === "X" ? `
+                                                  
+                                                  <span style="margin-left:8px;">
+                                                      ( ${r.Buconsumable} )
+                                                  </span>
+                                                  <span class="status-yes">YES</span>
+                                                `
+                                 : `<span class="status-no">NO</span>`
+                    }
+                                      </span>
+                                  </div>
+
+						<div class="data-row">
+                                      <span class="data-label">
+                                         Backup Order
+                                      </span>
+                                      <span class="data-value">
+                                          ${r.Claimorder === "X" ? `
+                                                  
+                                                  <span style="margin-left:8px;">
+                                                      ( ${r.Coconsumable} )
+                                                  </span>
+                                                  <span class="status-yes">YES</span>
+                                                `
+                                 : `<span class="status-no">NO</span>`
+                    }
+                                      </span>
+                                  </div>
+                                  
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                /* =====================================================
+                   TAB SWITCHING
+                ===================================================== */
+
+                setupTabs();
+
+                setTimeout(() => {
+                    resizeParentFrame();
+                }, 100);
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Model details error:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "details"
+                ).innerHTML = `
+
+                    <div class="error-card">
+
+                        <div class="error-title">
+                            Unable to load model details
+                        </div>
+
+                        ${safeValue(error.message)}
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           TAB FUNCTION
+        ========================================================= */
+
+        function setupTabs() {
+
+            const tabs =
+                document.querySelectorAll(
+                    ".tab"
+                );
+
+
+            const panels = {
+
+                overview:
+                    document.getElementById(
+                        "overviewTab"
+                    ),
+
+                programs:
+                    document.getElementById(
+                        "programsTab"
+                    ),
+
+                warranty:
+                    document.getElementById(
+                        "warrantyTab"
+                    ),
+
+                orders:
+                    document.getElementById(
+                        "ordersTab"
+                    ),
+
+                pricing:
+                    document.getElementById(
+                        "pricingTab"
+                    ),
+
+                status:
+                    document.getElementById(
+                        "statusTab"
+                    )
+
+            };
+
+
+            tabs.forEach(
+                tab => {
+
+                    tab.addEventListener(
+                        "click",
+                        function () {
+
+
+                            tabs.forEach(
+                                t =>
+                                    t.classList.remove(
+                                        "active"
+                                    )
+                            );
+
+
+                            this.classList.add(
+                                "active"
+                            );
+
+
+                            Object.values(
+                                panels
+                            ).forEach(
+                                panel => {
+
+                                    if (panel) {
+
+                                        panel.style.display =
+                                            "none";
+
+                                    }
+
+                                }
+                            );
+
+
+                            const selectedTab =
+                                this.dataset.tab;
+
+
+                            if (panels[selectedTab]) {
+
+                                panels[selectedTab].style.display =
+                                    "block";
+
+                                setTimeout(() => {
+                                    resizeParentFrame();
+                                }, 50);
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+        function resizeParentFrame() {
+
+            try {
+
+                const height = Math.max(
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight
+                );
+
+                const frame =
+                    parent.document.getElementById(
+                        "modelDetailsFrame"
+                    );
+
+                if (frame) {
+                    frame.style.height = height + "px";
+                }
+
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        /* =========================================================
+           START
+        ========================================================= */
+
+        configureBackButtons();
+
+        loadDetails();
+
+        window.addEventListener(
+            "load",
+            resizeParentFrame
+        );
+
+        window.addEventListener(
+            "resize",
+            resizeParentFrame
+        );
+
+    </script>
+
+</body>
+
+</html>
