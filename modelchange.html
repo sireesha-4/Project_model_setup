@@ -1068,6 +1068,123 @@
         .switch input:disabled+.slider {
             cursor: not-allowed !important;
         }
+
+        /* ===== Toggle Confirm Popup ===== */
+        .toggle-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483647;
+            overflow: hidden;
+        }
+
+        .toggle-confirm-content {
+            width: 420px;
+            max-width: 92%;
+            background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), #0b1220 70%);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 18px;
+            padding: 28px 28px 24px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            text-align: center;
+        }
+
+        .toggle-confirm-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .toggle-confirm-close:hover {
+            color: #ffffff;
+        }
+
+        .toggle-confirm-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f87171;
+            font-size: 24px;
+        }
+
+        .toggle-confirm-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .toggle-confirm-message {
+            font-size: 13.5px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .toggle-confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .toggle-confirm-btn {
+            min-width: 110px;
+            height: 42px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        .toggle-confirm-btn.yes {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .toggle-confirm-btn.yes:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .toggle-confirm-btn.no {
+            background: transparent;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+        }
+
+        .toggle-confirm-btn.no:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: #64748b;
+        }
     </style>
 </head>
 
@@ -1084,7 +1201,7 @@
 
             <div class="form-field">
                 <label>Model <span class="required">*</span></label>
-                <input type="text" id="changeModelSearch" placeholder="e.g. DCPL2550DW">
+                <input type="text" id="changeModelSearch" placeholder="Search only for the Model Detials ">
             </div>
 
             <!-- <div class="form-field">
@@ -1197,6 +1314,185 @@
             "Belt Unit Consumable": "Buconsumable",
             "Backup Order Consumable": "Coconsumable",
         };
+        // =====================================================
+        // TOGGLE CONFIRM POPUP
+        // =====================================================
+        function getToggleName(toggle) {
+            // Prefer data-toggle-label
+            if (toggle.dataset && toggle.dataset.toggleLabel) {
+                return toggle.dataset.toggleLabel;
+            }
+            // Fall back to nearest label text
+            const field = toggle.closest(".info-field") || toggle.closest(".checkbox-item");
+            if (field) {
+                const label = field.querySelector("label");
+                if (label) {
+                    // For checkbox-item the label is the sibling text
+                    return label.innerText.trim() || "this item";
+                }
+            }
+            // Last resort for Barracuda sub-checkboxes that use for= attribute
+            if (toggle.id) {
+                const lbl = document.querySelector(`label[for="${toggle.id}"]`);
+                if (lbl) return lbl.innerText.trim();
+            }
+            return "this item";
+        }
+
+        function showToggleConfirmPopup(toggleName, onYes, onNo) {
+            // Remove any existing confirm popup
+            const existing = document.getElementById("toggleConfirmModal");
+            if (existing) existing.remove();
+
+            const modalHtml = `
+                <div class="toggle-confirm-modal" id="toggleConfirmModal">
+                    <div class="toggle-confirm-content">
+                        <button class="toggle-confirm-close" id="toggleConfirmCloseBtn" title="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        
+                        <div class="toggle-confirm-title">
+                            Do you want to delete "${toggleName}"?
+                        </div>
+                        <div class="toggle-confirm-message">
+                            This action will turn the toggle OFF.
+                        </div>
+                        <div class="toggle-confirm-actions">
+                            <button class="toggle-confirm-btn yes" id="toggleConfirmYesBtn">
+                                YES
+                            </button>
+                            <button class="toggle-confirm-btn no" id="toggleConfirmNoBtn">
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Prefer injecting into parent (same pattern as review modal)
+            const targetDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+            targetDoc.body.insertAdjacentHTML("beforeend", modalHtml);
+
+            // Also inject the CSS into parent if needed
+            if (targetDoc !== document && !targetDoc.getElementById("toggleConfirmStyles")) {
+                const style = targetDoc.createElement("style");
+                style.id = "toggleConfirmStyles";
+                style.textContent = `
+                    .toggle-confirm-modal {
+                        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                        background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(8px);
+                        -webkit-backdrop-filter: blur(8px); display: flex; align-items: center;
+                        justify-content: center; z-index: 2147483647; overflow: hidden;
+                    }
+                    .toggle-confirm-content {
+                        width: 420px; max-width: 92%;
+                        background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), #0b1220 70%);
+                        border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 18px;
+                        padding: 28px 28px 24px; position: relative;
+                        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45); text-align: center;
+                    }
+                    .toggle-confirm-close {
+                        position: absolute; top: 14px; right: 16px; background: transparent;
+                        border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1; padding: 4px;
+                    }
+                    .toggle-confirm-close:hover { color: #ffffff; }
+                    .toggle-confirm-icon {
+                        width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%;
+                        background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35);
+                        display: flex; align-items: center; justify-content: center;
+                        color: #f87171; font-size: 24px;
+                    }
+                    .toggle-confirm-title {
+                        font-size: 17px; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; line-height: 1.4;
+                    }
+                    .toggle-confirm-message {
+                        font-size: 13.5px; color: #94a3b8; margin-bottom: 24px; line-height: 1.5;
+                    }
+                    .toggle-confirm-actions { display: flex; gap: 12px; justify-content: center; }
+                    .toggle-confirm-btn {
+                        min-width: 110px; height: 42px; border-radius: 10px; font-size: 14px;
+                        font-weight: 600; cursor: pointer; border: none;
+                        display: flex; align-items: center; justify-content: center; gap: 6px;
+                        transition: background 0.2s ease, transform 0.15s ease;
+                    }
+                    .toggle-confirm-btn.yes { background: #dc2626; color: #fff; }
+                    .toggle-confirm-btn.yes:hover { background: #b91c1c; transform: translateY(-1px); }
+                    .toggle-confirm-btn.no {
+                        background: transparent; color: #e2e8f0; border: 1px solid #475569;
+                    }
+                    .toggle-confirm-btn.no:hover {
+                        background: rgba(255, 255, 255, 0.06); border-color: #64748b;
+                    }
+                `;
+                targetDoc.head.appendChild(style);
+            }
+
+            // Prevent background scroll
+            const prevOverflow = targetDoc.body.style.overflow;
+            targetDoc.body.style.overflow = "hidden";
+
+            const modal = targetDoc.getElementById("toggleConfirmModal");
+            const yesBtn = targetDoc.getElementById("toggleConfirmYesBtn");
+            const noBtn = targetDoc.getElementById("toggleConfirmNoBtn");
+            const closeBtn = targetDoc.getElementById("toggleConfirmCloseBtn");
+
+            function cleanup() {
+                if (modal) modal.remove();
+                targetDoc.body.style.overflow = prevOverflow || "";
+            }
+
+            yesBtn.onclick = function () {
+                cleanup();
+                if (typeof onYes === "function") onYes();
+            };
+
+            noBtn.onclick = function () {
+                cleanup();
+                if (typeof onNo === "function") onNo();
+            };
+
+            closeBtn.onclick = function () {
+                cleanup();
+                if (typeof onNo === "function") onNo();   // X behaves like NO
+            };
+        }
+
+        /**
+         * Wrap any existing onchange handler so that turning a toggle OFF
+         * first shows a confirmation popup.
+         */
+        function wrapToggleWithConfirm(originalHandler) {
+            return function () {
+                const toggle = this;
+
+                // Only intercept when user is turning it OFF
+                if (!toggle.checked) {
+                    const name = getToggleName(toggle);
+
+                    // Immediately put it back to ON while we ask
+                    toggle.checked = true;
+
+                    showToggleConfirmPopup(name,
+                        // YES → really turn it OFF and run the original logic
+                        function () {
+                            toggle.checked = false;
+                            if (typeof originalHandler === "function") {
+                                originalHandler.call(toggle);
+                            }
+                        },
+                        // NO / X → keep it ON (already restored)
+                        function () {
+                            // nothing extra needed
+                        }
+                    );
+                } else {
+                    // Turning ON → just run original handler
+                    if (typeof originalHandler === "function") {
+                        originalHandler.call(toggle);
+                    }
+                }
+            };
+        }
 
         function toggleBarracudaRightColumn(toggle) {
             const section = toggle.closest(".change-content");
@@ -1247,8 +1543,8 @@
                 //         "<div>No data found</div>";
                 //     return;
                 // }
-               if (!record) {
-    document.getElementById("modelChangeResult").innerHTML = `
+                if (!record) {
+                    document.getElementById("modelChangeResult").innerHTML = `
         <div style="
             margin-top: 12px;
             padding: 14px 18px;
@@ -1265,8 +1561,8 @@
             Model does not exist
         </div>
     `;
-    return;
-} 
+                    return;
+                }
 
                 originalData =
                     JSON.parse(JSON.stringify(record));
@@ -1350,9 +1646,9 @@
                 toggles.forEach(t => {
                     t.disabled = false;
                     // Attach the live handler so turning ON/OFF updates the consumable field
-                    t.onchange = function () {
+                    t.onchange = wrapToggleWithConfirm(function () {
                         handleOrderToggle(this);
-                    };
+                    });
                 });
 
                 // Convert Consumable fields according to current toggle state
@@ -1467,8 +1763,32 @@
             }
 
             // Enable / disable toggles
+            // section.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
+            //     const label = toggle.closest(".info-field")?.querySelector("label")?.innerText?.trim();
+
+            //     // Keep permanently non-editable ones disabled
+            //     if (nonEditableToggles.includes(label)) {
+            //         toggle.disabled = true;
+            //         return;
+            //     }
+
+            //     // For Warranty section → respect country restriction
+            //     if (sectionName === "Warranty Information") {
+            //         const warrantyKey = toggle.closest(".info-field")?.dataset?.warranty;
+            //         if (warrantyKey && !isWarrantyAllowed(warrantyKey)) {
+            //             toggle.disabled = true;               // stay disabled + dimmed
+            //         } else {
+            //             toggle.disabled = false;              // allow editing
+            //         }
+            //     } else {
+            //         toggle.disabled = false;
+            //     }
+            // });
+            // Enable / disable toggles + attach confirm wrapper
             section.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
-                const label = toggle.closest(".info-field")?.querySelector("label")?.innerText?.trim();
+                const label = toggle.closest(".info-field")?.querySelector("label")?.innerText?.trim()
+                    || (toggle.id ? document.querySelector(`label[for="${toggle.id}"]`)?.innerText?.trim() : "")
+                    || "";
 
                 // Keep permanently non-editable ones disabled
                 if (nonEditableToggles.includes(label)) {
@@ -1486,6 +1806,24 @@
                     }
                 } else {
                     toggle.disabled = false;
+                }
+
+                // Attach confirmation wrapper (only once)
+                if (!toggle.dataset.confirmAttached) {
+                    let originalHandler = null;
+
+                    if (sectionName === "Warranty Information") {
+                        originalHandler = function () { handleWarrantyToggle(this); };
+                    } else if (sectionName === "Order Type") {
+                        originalHandler = function () { handleOrderToggle(this); };
+                    } else if (label === "Barracuda" || toggle.dataset.toggleLabel === "Barracuda") {
+                        originalHandler = function () { toggleBarracudaRightColumn(this); };
+                    } else if (label === "Model Price Setup" || label === "Consumable Price Setup") {
+                        originalHandler = function () { togglePricingBlock(this, label); };
+                    }
+
+                    toggle.onchange = wrapToggleWithConfirm(originalHandler);
+                    toggle.dataset.confirmAttached = "1";
                 }
             });
 
@@ -1570,7 +1908,7 @@
                 // SKUs stay as display-only (managed by handleWarrantyToggle)
                 "Standard Warranty SKU", "Extended Warranty SKU",
                 "BrotherCare SKU", "BrotherPlus SKU",
-                "Valid From",
+                // "Valid From",
                 "Valid To"
             ];
 
@@ -1625,28 +1963,27 @@
                     const styleAttr = readOnlyCompatibilityFields.includes(label) ? 'style="pointer-events:none;"' : "";
 
                     field.outerHTML = `
-        <div class="switch-wrapper">
-          <label class="switch" ${styleAttr}>
-            <input type="checkbox"
-                   ${checked}
-                   ${disabledAttr}
-                   data-toggle-label="${label}"
-                   onchange="togglePricingBlock(this,'${label}')">
-            <span class="slider"></span>
-          </label>
-        </div>
-      `;
+                                        <div class="switch-wrapper">
+                                        <label class="switch" ${styleAttr}>
+                                       <input type="checkbox"
+                                              ${checked}
+                                              ${disabledAttr}
+                                              data-toggle-label="${label}">
+                                       <span class="slider"></span>
+                                     </label>
+                                   </div>
+                                 `;
                     return;
                 }
 
                 // ---------- Consumable fields ----------
                 if (consumableFields.includes(label)) {
                     field.outerHTML = `
-        <span class="field-value consumable-display"
-              data-consumable-field="${label}">
-          ${value || "-"}
-        </span>
-      `;
+                            <span class="field-value consumable-display"
+                                  data-consumable-field="${label}">
+                              ${value || "-"}
+                            </span>
+                          `;
                     return;
                 }
 
@@ -1666,14 +2003,60 @@
 
                 if (isReadOnlyField) {
                     field.outerHTML = `
-        <input type="text"
+                            <input type="text"
                value="${value}"
                readonly
                class="material-readonly">
-      `;
+                          `;
                 } else {
                     field.outerHTML = `<input type="text" value="${value}">`;
                 }
+            });
+            // After converting fields – attach confirm wrappers to any new switches
+            section.querySelectorAll('input[type="checkbox"]:not([disabled])').forEach(toggle => {
+                if (toggle.dataset.confirmAttached) return;
+
+                const label = toggle.dataset.toggleLabel
+                    || toggle.closest(".info-field")?.querySelector("label")?.innerText?.trim()
+                    || (toggle.id ? document.querySelector(`label[for="${toggle.id}"]`)?.innerText?.trim() : "")
+                    || "";
+
+                let originalHandler = null;
+
+                if (sectionName === "Warranty Information") {
+                    originalHandler = function () { handleWarrantyToggle(this); };
+                } else if (sectionName === "Order Type") {
+                    originalHandler = function () { handleOrderToggle(this); };
+                } else if (label === "Barracuda" || toggle.dataset.toggleLabel === "Barracuda") {
+                    originalHandler = function () { toggleBarracudaRightColumn(this); };
+                } else if (label === "Model Price Setup" || label === "Consumable Price Setup") {
+                    originalHandler = function () { togglePricingBlock(this, label); };
+                }
+
+                toggle.onchange = wrapToggleWithConfirm(originalHandler);
+                toggle.dataset.confirmAttached = "1";
+            });
+            // After converting fields – attach confirm wrappers to any new switches
+            section.querySelectorAll('input[type="checkbox"]:not([disabled])').forEach(toggle => {
+                if (toggle.dataset.confirmAttached) return;
+
+                const label = toggle.dataset.toggleLabel
+                    || toggle.closest(".info-field")?.querySelector("label")?.innerText?.trim()
+                    || "";
+
+                let originalHandler = null;
+                if (sectionName === "Warranty Information") {
+                    originalHandler = function () { handleWarrantyToggle(this); };
+                } else if (sectionName === "Order Type") {
+                    originalHandler = function () { handleOrderToggle(this); };
+                } else if (label === "Barracuda") {
+                    originalHandler = function () { toggleBarracudaRightColumn(this); };
+                } else if (label === "Model Price Setup" || label === "Consumable Price Setup") {
+                    originalHandler = function () { togglePricingBlock(this, label); };
+                }
+
+                toggle.onchange = wrapToggleWithConfirm(originalHandler);
+                toggle.dataset.confirmAttached = "1";
             });
 
             // Change icon to save mode
@@ -1702,49 +2085,6 @@
 
         }
 
-        // function togglePricingBlock(toggle, label) {
-
-        //     const section =
-        //         toggle.closest(".change-content");
-
-
-
-        //     if (!section) return;
-
-        //     if (label === "Barracuda") {
-
-        //         const block =
-        //             section.querySelector("#barracudaDetails");
-
-        //         if (block) {
-
-        //             block.style.display =
-        //                 toggle.checked ? "block" : "none";
-        //         }
-        //     }
-
-        //     if (label === "Model Price Setup") {
-
-        //         const block =
-        //             section.querySelector("#b1PricingDetails");
-
-        //         if (block) {
-        //             block.style.display =
-        //                 toggle.checked ? "block" : "none";
-        //         }
-        //     }
-
-        //     if (label === "Consumable Price Setup") {
-
-        //         const block =
-        //             section.querySelector("#brPricingDetails");
-
-        //         if (block) {
-        //             block.style.display =
-        //                 toggle.checked ? "block" : "none";
-        //         }
-        //     }
-        // }
 
         function togglePricingBlock(toggle, label) {
             const section = toggle.closest(".change-content");
@@ -2672,102 +3012,9 @@ ${showPricing ? `
         </div>
     </div>
 
-    <!-- BR BLOCK -->
 
-    <div class="pricing-sub-block">
 
-        <div class="pricing-sub-block-title">
-            Consumable Price Details
-        </div>
 
-        <div class="toggle-grid">
-
-            <div class="info-field">
-                <label>Consumable Price Setup</label>
-                <div class="switch-wrapper">
-    <label class="switch">
-        <input
-            type="checkbox"
-            ${record.Selkzbr === "X" ? "checked" : ""}
-            disabled
-            data-toggle-label="Consumable Price Setup"
-    onchange="togglePricingBlock(this,'Consumable Price Setup')">
-        <span class="slider"></span>
-    </label>
-</div>
-            </div>
-
-        </div>
-
-        <div id="brPricingDetails"  class="pricing-details ${isBRPriceSetup ? "" : "hidden"}">
-            <div class="info-grid">
-
-                <div class="info-field">
-                 <label>Material Price</label>
-                  <span class="field-value">${record.Brkbetr || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                   <label>Currency</label>
-                   <span class="field-value">${record.Brkonwa || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                    <label>Pricing Unit</label>
-                    <span class="field-value">${record.Brkpein || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                    <label>Unit Of Measure</label>
-                    <span class="field-value">${record.Brkmein || "-"}</span>
-                </div>
-
-                
-                 <div class="info-field">
-                    <label>Condition Type</label>
-                    <span class="field-value">${record.Kschl || "-"}</span>
-                </div>
-               
-
- 
-                <div class="info-field">
-                    <label>Sales Organization</label>
-                    <span class="field-value">${record.Vkorg || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                    <label>Division</label>
-                    <span class="field-value">${record.Spart || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                    <label>Distribution Channel</label>
-                    <span class="field-value">${record.Vtweg || "-"}</span>
-                </div>
-
-                
-                <div class="info-field">
-                    <label>Customer Price Group</label>
-                    <span class="field-value">${record.Konda || "-"}</span>
-                </div>
-
-                <div class="info-field">
-                    <label>Calculation Type</label>
-                    <span class="field-value">${record.Brkrech}</span>
-                </div>
-
-               <div class="info-field">
-                <label>Valid From</label>
-               <span class="field-value">${record.Brdatab ? formatODataDate(record.Brdatab) : "-"}</span>
-                </div>
-
-               <div class="info-field">
-               <label>Valid To</label>
-               <span class="field-value">${record.Brdatbi ? formatODataDate(record.Brdatbi) : "-"}</span>
-               </div>
-            </div>
-        </div>
-    </div>
 </div>
 </div>
 ` : ''}
@@ -3036,15 +3283,11 @@ disabled>
       `;
                 }
 
-                const skuSpan = skuField.querySelector(".field-value") || skuField.querySelector("input");
-                if (skuSpan) {
-                    if (skuSpan.tagName === "INPUT") {
-                        skuSpan.value = "";
-                        skuSpan.disabled = true;
-                    } else {
-                        skuSpan.innerText = "-";
-                    }
-                }
+                const skuLabel = skuField.querySelector("label")?.innerText || "SKU";
+                skuField.innerHTML = `
+        <label>${skuLabel}</label>
+        <span class="field-value">-</span>
+    `;
                 return;
             }
 
@@ -4000,20 +4243,21 @@ color:#22c55e;
                             "Calculation Type": "B1krech",
                             "Valid From": "B1datab",
                             "Valid To": "B1datbi"
-                        },
-
-                        "Consumable Price Details": {
-                            "Consumable Price Setup": "Selkzbr",
-                            "Material Price": "Brkbetr",
-                            "Currency": "Brkonwa",
-                            "Pricing Unit": "Brkpein",
-                            "Customer Price Group": "Konda",
-                            "Unit of Measure": "Brkmein",
-                            "Unit Of Measure": "Brkmein",
-                            "Calculation Type": "Brkrech",
-                            "Valid From": "Brdatab",
-                            "Valid To": "Brdatbi"
                         }
+                        // ,
+
+                        // "Consumable Price Details": {
+                        //     "Consumable Price Setup": "Selkzbr",
+                        //     "Material Price": "Brkbetr",
+                        //     "Currency": "Brkonwa",
+                        //     "Pricing Unit": "Brkpein",
+                        //     "Customer Price Group": "Konda",
+                        //     "Unit of Measure": "Brkmein",
+                        //     "Unit Of Measure": "Brkmein",
+                        //     "Calculation Type": "Brkrech",
+                        //     "Valid From": "Brdatab",
+                        //     "Valid To": "Brdatbi"
+                        // }
 
                     };
 
@@ -4357,6 +4601,9 @@ color:#22c55e;
                 };
 
                 // Force these fields (even if they were not changed)
+                if (changepayload.B1kbetr === undefined) {
+                    changepayload.B1kbetr = getModelValue("Material Price", "B1kbetr");
+                }
                 if (changepayload.B1konwa === undefined) {
                     changepayload.B1konwa = getModelValue("Currency", "B1konwa");
                 }
@@ -4386,8 +4633,8 @@ color:#22c55e;
             // Force related Pricing fields for Consumable Price Details
             // =====================================================
             const hasConsumablePriceChanges = changedFields.some(c =>
-                c.section === "Pricing Information" &&
-                c.subCategory === "Consumable Price Details"
+                c.section === "Pricing Information"
+                //    && c.subCategory === "Consumable Price Details"
             );
 
             if (hasConsumablePriceChanges) {
@@ -4395,7 +4642,7 @@ color:#22c55e;
                 // Always send the toggle
                 const setupChange = changedFields.find(c =>
                     c.section === "Pricing Information" &&
-                    c.subCategory === "Consumable Price Details" &&
+                    // c.subCategory === "Consumable Price Details" &&
                     c.field === "Consumable Price Setup"
                 );
                 changepayload.Selkzbr = setupChange
@@ -4406,13 +4653,16 @@ color:#22c55e;
                 const getConsumableValue = (fieldName, backendKey) => {
                     const change = changedFields.find(c =>
                         c.section === "Pricing Information" &&
-                        c.subCategory === "Consumable Price Details" &&
+                        // c.subCategory === "Consumable Price Details" &&
                         c.field === fieldName
                     );
                     return change ? change.after : (originalData[backendKey] || "");
                 };
 
                 // Force these fields
+                if (changepayload.Brkbetr === undefined) {
+                    changepayload.Brkbetr = getModelValue("Material Price", "Brkbetr");
+                }
                 if (changepayload.Brkonwa === undefined) {
                     changepayload.Brkonwa = getConsumableValue("Currency", "Brkonwa");
                 }
@@ -4473,24 +4723,39 @@ color:#22c55e;
                     );
 
                     if (change) {
+                        // User actually changed this field
                         if (isToggle) {
+                            if (uiLabel === "Barracuda") {
+                                // Main Barracuda → "-" when OFF
+                                return change.after === "Yes" ? "X" : "-";
+                            }
+                            // Sub-fields (Basic, Occasional, Moderate, Frequent, High, Power)
+                            // → " " when OFF
                             return change.after === "Yes" ? "X" : " ";
                         }
-                        // Product Warranty comes as "X Months" or number – clean it
+
+                        // Product Warranty
                         if (uiLabel === "Product Warranty") {
                             const num = parseInt(change.after, 10);
                             return isNaN(num) ? 0 : num;
                         }
+
                         return change.after === "-" ? "" : change.after;
                     }
 
-                    // Fall back to original
+                    // User did NOT touch this field → keep original value
                     if (isToggle) {
+                        if (uiLabel === "Barracuda") {
+                            return originalData[backendKey] === "X" ? "X" : "-";
+                        }
+                        // Sub-fields keep original "X" or " "
                         return originalData[backendKey] === "X" ? "X" : " ";
                     }
+
                     if (uiLabel === "Product Warranty") {
                         return originalData[backendKey] != null ? Number(originalData[backendKey]) : 0;
                     }
+
                     return originalData[backendKey] || "";
                 };
 

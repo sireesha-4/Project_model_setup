@@ -24,7 +24,7 @@ const PORT = 3000;
 
 // const ODATA_URL = "https://vhbnubsdci.rise.brother.com:44300/sap/opu/odata/sap/ZTEST_OD_SRV/";
 
- const ODATA_URL =
+const ODATA_URL =
     "https://vhbnubsdci.rise.brother.com:44300/sap/opu/odata/sap/ZTEST_OD_SRV/";
 
 const ODATA_URL3 =
@@ -256,68 +256,68 @@ app.get("/api/models", async (req, res) => {
 
         let finalResults = [];
 
-       for (const model of models) {
+        for (const model of models) {
 
-    const keys =
-        `Matnr='${model}',Country='${country}'`;
+            const keys =
+                `Matnr='${model}',Country='${country}'`;
 
-    const url =
-        `${ODATA_URL}Model_setupSet(${keys})?$format=json`;
+            const url =
+                `${ODATA_URL}Model_setupSet(${keys})?$format=json`;
 
-    console.log(
-        "MODEL REPORT URL:",
-        url
-    );
+            console.log(
+                "MODEL REPORT URL:",
+                url
+            );
 
-    const response =
-        await axios.get(
-            url,
-            {
-                headers: {
-                    Authorization:
-                        req.session.sapAuth,
-                    Accept:
-                        "application/json",
-                    "sap-client":
-                        "800"
-                }
+            const response =
+                await axios.get(
+                    url,
+                    {
+                        headers: {
+                            Authorization:
+                                req.session.sapAuth,
+                            Accept:
+                                "application/json",
+                            "sap-client":
+                                "800"
+                        }
+                    }
+                );
+
+            console.log(
+                "MODEL REPORT RESPONSE:"
+            );
+
+            console.log(
+                JSON.stringify(
+                    response.data,
+                    null,
+                    2
+                )
+            );
+
+            if (
+                response.data?.d
+            ) {
+
+                finalResults.push(
+                    response.data.d
+                );
             }
+        }
+
+        console.log(
+            "FINAL RESULTS COUNT:",
+            finalResults.length
         );
 
-    console.log(
-        "MODEL REPORT RESPONSE:"
-    );
-
-    console.log(
-        JSON.stringify(
-            response.data,
-            null,
-            2
-        )
-    );
-
-    if (
-        response.data?.d
-    ) {
-
-        finalResults.push(
-            response.data.d
+        console.log(
+            JSON.stringify(
+                finalResults,
+                null,
+                2
+            )
         );
-    }
-}
-
-    console.log(
-    "FINAL RESULTS COUNT:",
-    finalResults.length
-);
-
-console.log(
-    JSON.stringify(
-        finalResults,
-        null,
-        2
-    )
-);
 
         res.json({
 
@@ -483,7 +483,7 @@ app.post("/api/model/create", async (req, res) => {
 
             payload.B1kbetr !== "" &&
 
-            payload.B1kbetr !== undefined
+                payload.B1kbetr !== undefined
 
                 ? String(payload.B1kbetr)
 
@@ -493,7 +493,7 @@ app.post("/api/model/create", async (req, res) => {
 
             payload.B1kpein !== "" &&
 
-            payload.B1kpein !== undefined
+                payload.B1kpein !== undefined
 
                 ? String(payload.B1kpein)
 
@@ -503,7 +503,7 @@ app.post("/api/model/create", async (req, res) => {
 
             payload.Brkbetr !== "" &&
 
-            payload.Brkbetr !== undefined
+                payload.Brkbetr !== undefined
 
                 ? String(payload.Brkbetr)
 
@@ -513,7 +513,7 @@ app.post("/api/model/create", async (req, res) => {
 
             payload.Brkpein !== "" &&
 
-            payload.Brkpein !== undefined
+                payload.Brkpein !== undefined
 
                 ? String(payload.Brkpein)
 
@@ -627,7 +627,7 @@ app.post("/api/model/create", async (req, res) => {
 
             csrfResponse.headers[
 
-                "x-csrf-token"
+            "x-csrf-token"
 
             ];
 
@@ -635,7 +635,7 @@ app.post("/api/model/create", async (req, res) => {
 
             csrfResponse.headers[
 
-                "set-cookie"
+            "set-cookie"
 
             ] || [];
 
@@ -735,7 +735,7 @@ app.post("/api/model/create", async (req, res) => {
 
                             return status >= 200 &&
 
-                                   status < 300;
+                                status < 300;
 
                         }
                 }
@@ -1024,7 +1024,7 @@ app.get("/api/model/get", async (req, res) => {
     }
 
 });
- 
+
 // Consumable API endpoint for testing
 // =====================================================
 // CONSUMABLE PRICING API
@@ -1069,32 +1069,61 @@ app.get(
                     .trim()
 
                     .toUpperCase();
-
-
-            const country =
-
+            const kschl =
                 String(
+                    req.query.kschl || "ZPR0"
+                ).trim().toUpperCase();
 
-                    req.query.country || ""
+            const konda =
+                String(
+                    req.query.konda || "ZX"
+                ).trim().toUpperCase();
 
-                )
+            const werks =
+                String(
+                    req.query.werks || "1710"
+                ).trim().toUpperCase();
 
-                    .trim()
+            const vtweg =
+                String(
+                    req.query.vtweg || "30"
+                ).trim().toUpperCase();
 
-                    .toUpperCase();
-
+            const spart =
+                String(
+                    req.query.spart || "10"
+                ).trim().toUpperCase();
 
             const program =
-
                 String(
+                    req.query.program || "BR"
+                ).trim().toUpperCase();
 
-                    req.query.program || ""
 
-                )
+            // const country =
 
-                    .trim()
+            //     String(
 
-                    .toUpperCase();
+            //         req.query.country || ""
+
+            //     )
+
+            //         .trim()
+
+            //         .toUpperCase();
+
+
+            // const program =
+
+            //     String(
+
+            //         req.query.program || ""
+
+            //     )
+
+            //         .trim()
+
+            //         .toUpperCase();
 
             // =========================================
             // VALIDATION
@@ -1112,17 +1141,17 @@ app.get(
 
             }
 
-            if (!country) {
+            // if (!country) {
 
-                return res.status(400).json({
+            //     return res.status(400).json({
 
-                    success: false,
+            //         success: false,
 
-                    message: "Country is required"
+            //         message: "Country is required"
 
-                });
+            //     });
 
-            }
+            // }
 
             if (
 
@@ -1170,15 +1199,15 @@ app.get(
 
                 );
 
-            const safeCountry =
+            // const safeCountry =
 
-                country.replace(
+            //     country.replace(
 
-                    /'/g,
+            //         /'/g,
 
-                    "''"
+            //         "''"
 
-                );
+            //     );
 
             // =========================================
             // PROGRAM KEYS
@@ -1212,30 +1241,56 @@ app.get(
             // BUILD COMPOSITE KEY
             // =========================================
 
+            // const requestedKeys =
+
+            //     "Consumable='" +
+
+            //     safeConsumable +
+
+            //     "'," +
+
+            //     "Country='" +
+
+            //     safeCountry +
+
+            //     "'," +
+
+            //     "Selkzb1='" +
+
+            //     selkzb1 +
+
+            //     "'," +
+
+            //     "Selkzbr='" +
+
+            //     selkzbr +
+
+            //     "'";
+
             const requestedKeys =
-
                 "Consumable='" +
-
                 safeConsumable +
-
                 "'," +
-
-                "Country='" +
-
-                safeCountry +
-
+                "Kschl='" +
+                kschl +
                 "'," +
-
                 "Selkzb1='" +
-
                 selkzb1 +
-
                 "'," +
-
                 "Selkzbr='" +
-
                 selkzbr +
-
+                "'," +
+                "Werks='" +
+                werks +
+                "'," +
+                "Vtweg='" +
+                vtweg +
+                "'," +
+                "Spart='" +
+                spart +
+                "'," +
+                "Konda='" +
+                konda +
                 "'";
 
             // =========================================
@@ -1276,11 +1331,26 @@ app.get(
             );
 
             console.log(
+                "Kschl:",
+                kschl
+            );
+            console.log(
+                "Konda:",
+                konda
+            );
 
-                "Country:",
+            console.log(
+                "Werks:",
+                werks
+            );
+            console.log(
+                "Vtweg:",
+                vtweg
+            );
 
-                country
-
+            console.log(
+                "Spart:",
+                spart
             );
 
             console.log(
@@ -1339,242 +1409,253 @@ app.get(
             const record =
 
                 sapResponse.data?.d;
+            console.log(
+                "FULL SAP RECORD:"
+            );
 
-                console.log(
+            console.log(
+                JSON.stringify(
+                    record,
+                    null,
+                    2
+                )
+            );
 
-    "======================================"
+            console.log(
 
-);
+                "======================================"
 
-console.log(
+            );
 
-    "======================================"
+            console.log(
 
-);
+                "======================================"
 
-console.log(
+            );
 
-    "RAW SAP CONSUMABLE RECORD"
+            console.log(
 
-);
+                "RAW SAP CONSUMABLE RECORD"
 
-console.log({
+            );
 
-    requestedProgram:
+            console.log({
 
-        program,
+                requestedProgram:
 
-    Consumable:
+                    program,
 
-        record?.Consumable,
+                Consumable:
 
-    Country:
+                    record?.Consumable,
 
-        record?.Country,
+                Country:
 
-    Selkzb1:
+                    record?.Country,
 
-        record?.Selkzb1,
+                Selkzb1:
 
-    Selkzbr:
+                    record?.Selkzb1,
 
-        record?.Selkzbr,
+                Selkzbr:
 
-    Kschl:
+                    record?.Selkzbr,
 
-        record?.Kschl,
+                Kschl:
 
-    Vkorg:
+                    record?.Kschl,
 
-        record?.Vkorg,
+                Vkorg:
 
-    Konda:
+                    record?.Vkorg,
 
-        record?.Konda,
+                Konda:
 
-    B1: {
+                    record?.Konda,
 
-        price:
+                B1: {
 
-            record?.B1kbetr,
+                    price:
 
-        currency:
+                        record?.B1kbetr,
 
-            record?.B1konwa,
+                    currency:
 
-        pricingUnit:
+                        record?.B1konwa,
 
-            record?.B1kpein,
+                    pricingUnit:
 
-        uom:
+                        record?.B1kpein,
 
-            record?.B1kmein,
+                    uom:
 
-        calculationType:
+                        record?.B1kmein,
 
-            record?.B1krech,
+                    calculationType:
 
-        validFrom:
+                        record?.B1krech,
 
-            record?.B1datab,
+                    validFrom:
 
-        validTo:
+                        record?.B1datab,
 
-            record?.B1datbi
+                    validTo:
 
-    },
+                        record?.B1datbi
 
-    BR: {
+                },
 
-        price:
+                BR: {
 
-            record?.Brkbetr,
+                    price:
 
-        currency:
+                        record?.Brkbetr,
 
-            record?.Brkonwa,
+                    currency:
 
-        pricingUnit:
+                        record?.Brkonwa,
 
-            record?.Brkpein,
+                    pricingUnit:
 
-        uom:
+                        record?.Brkpein,
 
-            record?.Brkmein,
+                    uom:
 
-        calculationType:
+                        record?.Brkmein,
 
-            record?.Brkrech,
+                    calculationType:
 
-        validFrom:
+                        record?.Brkrech,
 
-            record?.Brdatab,
+                    validFrom:
 
-        validTo:
+                        record?.Brdatab,
 
-            record?.Brdatbi
+                    validTo:
 
-    }
+                        record?.Brdatbi
 
-});
+                }
 
-console.log(
+            });
 
-    "======================================"
+            console.log(
 
-);
+                "======================================"
 
-console.log(
+            );
 
-    "RAW SAP CONSUMABLE RECORD"
+            console.log(
 
-);
+                "RAW SAP CONSUMABLE RECORD"
 
-console.log({
+            );
 
-    requestedProgram:
+            console.log({
 
-        program,
+                requestedProgram:
 
-    Consumable:
+                    program,
 
-        record?.Consumable,
+                Consumable:
 
-    Country:
+                    record?.Consumable,
 
-        record?.Country,
+                Country:
 
-    Selkzb1:
+                    record?.Country,
 
-        record?.Selkzb1,
+                Selkzb1:
 
-    Selkzbr:
+                    record?.Selkzb1,
 
-        record?.Selkzbr,
+                Selkzbr:
 
-    Kschl:
+                    record?.Selkzbr,
 
-        record?.Kschl,
+                Kschl:
 
-    Vkorg:
+                    record?.Kschl,
 
-        record?.Vkorg,
+                Vkorg:
 
-    Konda:
+                    record?.Vkorg,
 
-        record?.Konda,
+                Konda:
 
-    B1: {
+                    record?.Konda,
 
-        price:
+                B1: {
 
-            record?.B1kbetr,
+                    price:
 
-        currency:
+                        record?.B1kbetr,
 
-            record?.B1konwa,
+                    currency:
 
-        pricingUnit:
+                        record?.B1konwa,
 
-            record?.B1kpein,
+                    pricingUnit:
 
-        uom:
+                        record?.B1kpein,
 
-            record?.B1kmein,
+                    uom:
 
-        calculationType:
+                        record?.B1kmein,
 
-            record?.B1krech,
+                    calculationType:
 
-        validFrom:
+                        record?.B1krech,
 
-            record?.B1datab,
+                    validFrom:
 
-        validTo:
+                        record?.B1datab,
 
-            record?.B1datbi
+                    validTo:
 
-    },
+                        record?.B1datbi
 
-    BR: {
+                },
 
-        price:
+                BR: {
 
-            record?.Brkbetr,
+                    price:
 
-        currency:
+                        record?.Brkbetr,
 
-            record?.Brkonwa,
+                    currency:
 
-        pricingUnit:
+                        record?.Brkonwa,
 
-            record?.Brkpein,
+                    pricingUnit:
 
-        uom:
+                        record?.Brkpein,
 
-            record?.Brkmein,
+                    uom:
 
-        calculationType:
+                        record?.Brkmein,
 
-            record?.Brkrech,
+                    calculationType:
 
-        validFrom:
+                        record?.Brkrech,
 
-            record?.Brdatab,
+                    validFrom:
 
-        validTo:
+                        record?.Brdatab,
 
-            record?.Brdatbi
+                    validTo:
 
-    }
+                        record?.Brdatbi
 
-});
+                }
 
-console.log(
+            });
 
-    "======================================"
+            console.log(
 
-);
+                "======================================"
+
+            );
 
             console.log(
 
@@ -1746,308 +1827,103 @@ console.log(
             // =========================================
 
             return res.status(200).json({
-
                 success: true,
 
-                consumable:
+                CONSUMABLE: record.Consumable,
+                MTART: record.Mtart,
+                MBRSH: record.Mbrsh,
+                MATKL: record.Matkl,
+                MEINS: record.Meins,
+                SPART: record.Spart,
+                EAN11: record.Ean11,
+                MSTAE: record.Mstae,
+                MSTAV: record.Mstav,
+                SPRAS: record.Spras,
+                MAKTX: record.Maktx,
+                VTWEG: record.Vtweg,
+                WERKS: record.Werks,
+                VMSTA: record.Vmsta,
 
-                    record.Consumable ||
+                KSCHL: record.Kschl,
+                SELKZB1: record.Selkzb1,
+                SELKZBR: record.Selkzbr,
+                KONDA: record.Konda,
 
-                    consumable,
+                B1KBETR: record.B1kbetr,
+                B1KONWA: record.B1konwa,
+                B1KPEIN: record.B1kpein,
+                B1KMEIN: record.B1kmein,
+                B1KRECH: record.B1krech,
+                B1DATAB: record.B1datab,
+                B1DATBI: record.B1datbi,
 
-                country:
-
-                    record.Country ||
-
-                    country,
-
-                program:
-
-                    program,
-
-                pricing:
-
-                    pricing
-
+                BRKBETR: record.Brkbetr,
+                BRKONWA: record.Brkonwa,
+                BRKPEIN: record.Brkpein,
+                BRKMEIN: record.Brkmein,
+                BRKRECH: record.Brkrech,
+                BRDATAB: record.Brdatab,
+                BRDATBI: record.Brdatbi
             });
 
 
         } catch (error) {
 
-            console.error(
-
+            console.log(
                 "======================================"
-
             );
 
-            console.error(
-
+            console.log(
                 "CONSUMABLE PRICING ERROR"
-
             );
 
-            console.error(
-
+            console.log(
                 "======================================"
-
             );
 
-            console.error(
-
-                "Message:",
-
+            console.log(
+                "ERROR MESSAGE:",
                 error.message
+            );
 
+            console.log(
+                "ERROR STACK:"
+            );
+
+            console.log(
+                error.stack
             );
 
             if (error.response) {
 
-                console.error(
-
-                    "SAP Status:",
-
+                console.log(
+                    "SAP STATUS:",
                     error.response.status
-
                 );
 
-                console.error(
-
-                    "SAP Response:"
-
+                console.log(
+                    "SAP DATA:"
                 );
 
-                console.error(
-
+                console.log(
                     JSON.stringify(
-
                         error.response.data,
-
                         null,
-
                         2
-
                     )
-
                 );
-
-            }
-
-            let message =
-
-                "Unable to retrieve consumable pricing";
-
-
-            const sapMessage =
-
-                error.response
-
-                    ?.data
-
-                    ?.error
-
-                    ?.message;
-
-
-            if (
-
-                typeof sapMessage === "string"
-
-            ) {
-
-                message =
-
-                    sapMessage;
-
-            } else if (
-
-                sapMessage?.value
-
-            ) {
-
-                message =
-
-                    sapMessage.value;
-
-            } else if (
-
-                error.message
-
-            ) {
-
-                message =
-
-                    error.message;
 
             }
 
             return res.status(500).json({
-
                 success: false,
-
-                message:
-
-                    message,
-
-                sapStatus:
-
-                    error.response?.status ||
-
-                    null
-
+                message: error.message
             });
-
         }
 
     }
 
 );
-
-// =====================================================
-// CONSUMABLE PRICE UPDATE
-// =====================================================
-
-// app.put(
-//     "/api/consumable/updatePrice",
-//     async (req, res) => {
-
-//         try {
-
-//             if (!req.session.sapAuth) {
-
-//                 return res.status(401).json({
-//                     success: false,
-//                     message: "Please login first"
-//                 });
-//             }
-
-//             console.log(
-//                 "CONSUMABLE UPDATE REQUEST"
-//             );
-
-//             console.log(
-//                 JSON.stringify(
-//                     req.body,
-//                     null,
-//                     2
-//                 )
-//             );
-
-//             const payload =
-//                 req.body;
-
-//             const csrfResponse =
-//                 await axios.get(
-//                     ODATA_URL,
-//                     {
-//                         headers: {
-//                             Authorization:
-//                                 req.session.sapAuth,
-
-//                             "X-CSRF-Token":
-//                                 "Fetch",
-
-//                             Accept:
-//                                 "application/json",
-
-//                             "sap-client":
-//                                 "800"
-//                         }
-//                     }
-//                 );
-
-//             const token =
-//                 csrfResponse.headers[
-//                     "x-csrf-token"
-//                 ];
-
-//             const cookies =
-//                 csrfResponse.headers[
-//                     "set-cookie"
-//                 ] || [];
-
-//             const cookieHeader =
-//                 cookies
-//                     .map(
-//                         cookie =>
-//                             cookie.split(";")[0]
-//                     )
-//                     .join("; ");
-
-//             const sapUrl =
-//                 `${ODATA_URL}Conprice_detailsSet(` +
-//                 `Consumable='${payload.Consumable}',` +
-//                 `Country='${payload.Country}',` +
-//                 `Selkzb1='${payload.Selkzb1}',` +
-//                 `Selkzbr='${payload.Selkzbr}'` +
-//                 `)`;
-
-//             console.log(
-//                 "PRICE UPDATE URL:"
-//             );
-
-//             console.log(
-//                 sapUrl
-//             );
-
-//             const sapResponse =
-//                 await axios.put(
-//                     sapUrl,
-//                     payload,
-//                     {
-//                         headers: {
-
-//                             Authorization:
-//                                 req.session.sapAuth,
-
-//                             "X-CSRF-Token":
-//                                 token,
-
-//                             Cookie:
-//                                 cookieHeader,
-
-//                             Accept:
-//                                 "application/json",
-
-//                             "Content-Type":
-//                                 "application/json",
-
-//                             "sap-client":
-//                                 "800"
-//                         }
-//                     }
-//                 );
-
-//             console.log(
-//                 "PRICE UPDATE SUCCESS"
-//             );
-
-//             return res.json({
-//                 success: true,
-//                 data:
-//                     sapResponse.data
-//             });
-
-//         }
-//         catch (error) {
-
-//             console.error(
-//                 "PRICE UPDATE ERROR"
-//             );
-
-//             console.error(
-//                 error.response?.data ||
-//                 error.message
-//             );
-
-//             return res.status(500).json({
-//                 success: false,
-//                 message:
-//                     error.response?.data ||
-//                     error.message
-//             });
-//         }
-//     }
-// );
 
 // =====================================================
 // CONSUMABLE PRICE UPDATE
@@ -2105,12 +1981,12 @@ app.put(
 
             const token =
                 csrfResponse.headers[
-                    "x-csrf-token"
+                "x-csrf-token"
                 ];
 
             const cookies =
                 csrfResponse.headers[
-                    "set-cookie"
+                "set-cookie"
                 ] || [];
 
             const cookieHeader =
@@ -2127,9 +2003,13 @@ app.put(
             const sapUrl =
                 `${ODATA_URL}Conprice_detailsSet(` +
                 `Consumable='${payload.Consumable}',` +
-                `Country='${payload.Country}',` +
+                `Kschl='${payload.Kschl}',` +
                 `Selkzb1='${payload.Selkzb1}',` +
-                `Selkzbr='${payload.Selkzbr}'` +
+                `Selkzbr='${payload.Selkzbr}',` +
+                `Werks='${payload.Werks}',` +
+                `Vtweg='${payload.Vtweg}',` +
+                `Spart='${payload.Spart}',` +
+                `Konda='${payload.Konda}'` +
                 `)`;
 
             console.log(
@@ -2200,15 +2080,15 @@ app.put(
         }
     }
 );
- 
+
 ///=============================Model Change API(Save Changes)========================
 
 app.put("/api/model/change", async (req, res) => {
- 
+
     console.log("=====Model CHange API HIT =====");
 
     console.log("changedFields:", req.body);
- 
+
     try {
 
         if (!req.session.sapAuth) {
@@ -2224,15 +2104,15 @@ app.put("/api/model/change", async (req, res) => {
         }
 
         const changedFields = req.body;
- 
+
         console.log("Calling SAP URL:");
 
         console.log(changedFields);
- 
+
         const SERVICE_ROOT =
 
             "https://vhbnubsdci.rise.brother.com:44300/sap/opu/odata/sap/ZTEST_OD_SRV/";
- 
+
         const csrfResponse = await axios.get(
 
             SERVICE_ROOT,
@@ -2252,21 +2132,21 @@ app.put("/api/model/change", async (req, res) => {
             }
 
         );
- 
+
         const token =
 
             csrfResponse.headers["x-csrf-token"];
- 
+
         const cookies =
 
             csrfResponse.headers["set-cookie"];
- 
+
         const sapUrl =
 
             `${SERVICE_ROOT}Model_setupSet(Matnr='${changedFields.Matnr}',Country='${changedFields.Country}')`;
- 
+
         console.log("SAP URL =>", sapUrl);
- 
+
         const sapResponse = await axios.put(
 
             sapUrl,
@@ -2292,31 +2172,31 @@ app.put("/api/model/change", async (req, res) => {
             }
 
         );
- 
+
         console.log("SAP Success");
- 
+
         res.status(200).json({
 
             success: true
 
         });
- 
+
     } catch (error) {
- 
+
         console.log("SAP Error:");
 
         console.log(error.response?.data || error.message);
- 
+
         res.status(500).json({
 
             success: false
 
         });
- 
+
     }
- 
+
 });
- 
+
 // consumbles
 
 app.listen(PORT, () => {
