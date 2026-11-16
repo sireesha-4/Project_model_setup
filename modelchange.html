@@ -4661,7 +4661,7 @@ color:#22c55e;
 
                 // Force these fields
                 if (changepayload.Brkbetr === undefined) {
-                    changepayload.Brkbetr = getModelValue("Material Price", "Brkbetr");
+                    changepayload.Brkbetr = getConsumableValue("Material Price", "Brkbetr");
                 }
                 if (changepayload.Brkonwa === undefined) {
                     changepayload.Brkonwa = getConsumableValue("Currency", "Brkonwa");
